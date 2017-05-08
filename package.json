@@ -1,0 +1,43 @@
+{
+  "name": "sip-handler-api",
+  "version": "0.0.1",
+  "description": "Super simple application to generate SIP creds and route calls",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'no tests yet'",
+    "debug": "DEBUG=sip-handler nodemon index.js",
+    "start": "DEBUG=sip-handler node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://dtolb@github.com/dtolb/sip-handler.git"
+  },
+  "keywords": [
+    "bandwidth",
+    "sms",
+    "masked",
+    "masked-sms",
+    "masked-calling",
+    "call-tracking"
+  ],
+  "author": "Dan Tolbert",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dtolb/sip-handler/issues"
+  },
+  "homepage": "https://github.com/dtolb/sip-handler#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "debug": "^2.6.3",
+    "express": "^4.15.2",
+    "node-bandwidth": "^2.3.2",
+    "pg": "^6.1.5",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.30.4",
+    "serve-favicon": "^2.4.2",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
