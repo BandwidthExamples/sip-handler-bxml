@@ -1,5 +1,5 @@
 {
-  "name": "Bandwidth Masked Number API",
+  "name": "Bandwidth SIP Handler",
   "description": "Bandwidth Voice & Messaging API Sample App routing SIP calls",
   "repository": "https://github.com/dtolb/sip-handler.git",
   "logo": "https://avatars2.githubusercontent.com/u/12057884?v=3&s=200",
