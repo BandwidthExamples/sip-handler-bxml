@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Bandwidth SIP Handler</title>
-<link href="font/css/styles.min.css" rel="stylesheet">
+<!-- <link href="font/css/styles.min.css" rel="stylesheet">
 <link href="css/base.css" rel="stylesheet">
 <link href="css/inputs.css" rel="stylesheet">
 <link href="css/buttons.css" rel="stylesheet">
-<link href="css/tables.css" rel="stylesheet">
+<link href="css/tables.css" rel="stylesheet"> -->
+<link href="https://d3l0ifulerbodr.cloudfront.net/main.css" rel="stylesheet">
 <style>
     .main-container{
         width: 60%;
@@ -21,6 +22,17 @@
         margin-top: 5em;
         clear: both;
     }
+    .wss-text{
+        float:left;
+        display:inline;
+        display: flex;
+        flex-direction: row;
+    }
+    .wss-text>* {
+        margin: auto;
+        display: inline;
+        line-height: 1em;
+    }
 </style>
 </head>
 <body>
@@ -30,7 +42,7 @@
     <br />
 <!-- Start component HTML -->
     <div class="wss-text">
-        <h3>Websocket URI:  <br /><code>wss://webrtc.registration.bandwidth.com:10443</code></h3>
+        <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3> <button class="btn button button--secondary button--small button--light button--hover-go button--right" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443">Copy</button>
     </div>
     <div class="inline-wrap">
         <div class="form-input blocks clearfix required">
@@ -44,7 +56,7 @@
             <div class="help">Must be at least 6 characters!</div>
         </div>
     </div>
-    <button class="submit hover-go right" id="maskedNumberButton">Create new SIP Endpoint</button>
+    <button class="button button--submit button--hover-go button--right" id="maskedNumberButton">Create new SIP Endpoint</button>
     <div class="table-wrap">
         <table cellpadding="0" cellspacing="0" class="small" id='maskedNumbersTable'>
             <thead>
@@ -62,9 +74,19 @@
 <!-- End component HTML -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/libphonenumber-js/0.4.9/libphonenumber-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js"></script>
 <script src="js/base.js"></script>
 <script src="js/index.js"></script>
 <scirpt src="js/tables.js"></scirpt>
+<script type="text/javascript">
+    var clipboard = new Clipboard('.btn');
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+</script>
 <script type="text/javascript">
 
     var getMaskedNumbers = function () {
@@ -113,6 +135,24 @@
         });
     }
 
+    var makeCopyButton = function (data) {
+        return '<button class="btn" data-clipboard-text="' + data +'">Copy</button>'
+    }
+
+    var makeTableRow = function (sipUri, password, number) {
+        var sipUriCopyButton = makeCopyButton(sipUri);
+        var passwordCopyButton = makeCopyButton(password);
+        var tableRow = '<tr><td><code>' + sipUri + sipUriCopyButton + '</code></td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
+        return tableRow;
+    }
+
+    var makeNewTableRow = function (sipUri, password, number) {
+        var sipUriCopyButton = makeCopyButton(sipUri);
+        var passwordCopyButton = makeCopyButton(password);
+        var tableRow = '<tr class="new-row"><td class="new-cell"><code>' + sipUri + sipUriCopyButton + '</code></td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
+        return tableRow;
+    }
+
     var submitNumbers = function () {
         var username = $('#username').val();
         var password = $('#password').val();
@@ -127,7 +167,7 @@
                 var sipUri = response.sipUri;
                 var number = response.number;
                 var password = response.password;
-                var tableRow = '<tr class="new-row"><td class="new-cell"><code>' + sipUri + '</code></td><td><code>' + password + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
+                var tableRow = makeNewTableRow(sipUri, password, number);
                 $('#maskedNumbersTableBody').prepend(tableRow);
             })
             .catch(function (error) {
@@ -158,7 +198,7 @@
             var sipUri = entry.sipUri;
             var number = entry.number;
             var password = entry.password;
-            var tableRow = '<tr><td><code>' + sipUri + '</code></td><td><code>' + password + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
+            var tableRow = makeTableRow(sipUri, password, number);
             $('#maskedNumbersTableBody').append(tableRow);
         })
     })
