@@ -8,8 +8,8 @@ const db = require('../controllers/db_controller.js');
 router.route('/')
 	.post(
 		bindings.validateMessage,
-		bw.getNewNumber,
 		bw.createEndpoint,
+		bw.getNewNumber,
 		db.saveBinding
 		)
 	.get(

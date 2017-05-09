@@ -27,9 +27,11 @@
   },
   "homepage": "https://github.com/dtolb/sip-handler#readme",
   "dependencies": {
+    "awesome-phonenumber": "^1.3.0",
     "body-parser": "^1.17.1",
     "debug": "^2.6.3",
     "express": "^4.15.2",
+    "joi": "^10.4.1",
     "node-bandwidth": "^2.3.2",
     "pg": "^6.1.5",
     "pg-hstore": "^2.3.2",

@@ -61,6 +61,7 @@
 </div>
 <!-- End component HTML -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/libphonenumber-js/0.4.9/libphonenumber-js.min.js"></script>
 <script src="js/base.js"></script>
 <script src="js/index.js"></script>
 <scirpt src="js/tables.js"></scirpt>
@@ -121,10 +122,12 @@
         else {
             return makeSIPEndpoint(username, password)
             .then(function (response) {
+                $('#username').val('');
+                $('#password').val('');
                 var sipUri = response.sipUri;
                 var number = response.number;
                 var password = response.password;
-                var tableRow = '<tr class="new-row"><td class="new-cell"><code>' + sipUri + '</code></td><td><code>' + password + '</code></td><td>' + number + '</td></tr>'
+                var tableRow = '<tr class="new-row"><td class="new-cell"><code>' + sipUri + '</code></td><td><code>' + password + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
                 $('#maskedNumbersTableBody').prepend(tableRow);
             })
             .catch(function (error) {
@@ -155,7 +158,7 @@
             var sipUri = entry.sipUri;
             var number = entry.number;
             var password = entry.password;
-            var tableRow = '<tr><td><code>' + sipUri + '</code></td><td><code>' + password + '</code></td><td>' + number + '</td></tr>'
+            var tableRow = '<tr><td><code>' + sipUri + '</code></td><td><code>' + password + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
             $('#maskedNumbersTableBody').append(tableRow);
         })
     })

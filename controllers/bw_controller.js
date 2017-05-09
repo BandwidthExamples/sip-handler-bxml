@@ -151,8 +151,10 @@ module.exports.createEndpoint = (req, res, next) => {
 		})
 	})
 	.catch( (reason) => {
-		debug(reason);
-		next(reason);
+		debug(reason.message);
+		let err = new Error(reason.message);
+		err.status = reason.statusCode;
+		next(err);
 	});
 };
 
