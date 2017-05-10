@@ -11,7 +11,7 @@ let sequelize = new Sequelize(connectionUrl);
 
 // load models
 const models = [
-	'Binding'
+	'SIPBinding'
 ];
 models.forEach(function (model) {
 	module.exports[model] = sequelize.import(__dirname + '/' + model);

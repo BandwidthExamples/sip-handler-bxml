@@ -11,8 +11,8 @@
 <link href="https://d3l0ifulerbodr.cloudfront.net/main.css" rel="stylesheet">
 <style>
     .main-container{
-        width: 60%;
-        max-width: 700px;
+        width: 75%;
+        max-width: 800px;
         margin: 0 auto;
     }
     .main-container button{
@@ -33,6 +33,19 @@
         display: inline;
         line-height: 1em;
     }
+    .wss-button{
+        max-height: 95%;
+        max-width: 95%;
+    }
+    .table-button{
+        max-height: 99%;
+        max-width: 99%;
+    }
+    .td>* {
+        margin: auto;
+        display: inline;
+        line-height: 1em;
+    }
 </style>
 </head>
 <body>
@@ -42,7 +55,10 @@
     <br />
 <!-- Start component HTML -->
     <div class="wss-text">
-        <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3> <button class="btn button button--secondary button--small button--light button--hover-go button--right" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443">Copy</button>
+        <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3> 
+        <button class="btn iconic iconic--secondary iconic--small iconic--light" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443"><img class="wss-button" src="Clipboard.svg" alt="copy"></i></button>
+
+<!--         <button class="btn button button--secondary button--small button--light button--hover-go button--right" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443">Copy</button> -->
     </div>
     <div class="inline-wrap">
         <div class="form-input blocks clearfix required">
@@ -64,6 +80,8 @@
                     <th>SIP URI</th>
                     <th>Password</th>
                     <th>Telephone Number</th>
+                    <th>Enabled</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody id='maskedNumbersTableBody'>
@@ -136,21 +154,42 @@
     }
 
     var makeCopyButton = function (data) {
-        return '<button class="btn" data-clipboard-text="' + data +'">Copy</button>'
+        return '<button class="btn iconic iconic--secondary iconic--small iconic--light" data-clipboard-text=' + data+ '><img class="table-button" src="Clipboard.svg" alt="copy"></i></button>'
     }
 
-    var makeTableRow = function (sipUri, password, number) {
+    var makeTableRow = function (sipUri, password, number, enabled, uuid, newRow=false) {
         var sipUriCopyButton = makeCopyButton(sipUri);
         var passwordCopyButton = makeCopyButton(password);
-        var tableRow = '<tr><td><code>' + sipUri + sipUriCopyButton + '</code></td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
+        var toggle = makeToggle(enabled, uuid)
+        var deleteButton = makeDeleteButton(uuid)
+        var tableRow = ''
+        if (newRow) {
+            tableRow = '<tr id="tr-' + uuid + '" class="new-row"><td class="new-cell"><code>'
+        }
+        else {
+            tableRow = '<tr id="tr-' + uuid + '"><td><code>'
+        }
+        tableRow = tableRow + sipUri + sipUriCopyButton + '</code></td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td><td>' + toggle + '</td><td>' + deleteButton + '</td></tr>'
         return tableRow;
     }
 
-    var makeNewTableRow = function (sipUri, password, number) {
-        var sipUriCopyButton = makeCopyButton(sipUri);
-        var passwordCopyButton = makeCopyButton(password);
-        var tableRow = '<tr class="new-row"><td class="new-cell"><code>' + sipUri + sipUriCopyButton + '</code></td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td></tr>'
-        return tableRow;
+    var makeDeleteButton = function (uuid) {
+        return '<button onclick="deleteEndpoint(this)" class="btn iconic iconic--secondary iconic--small iconic--light deleteButton" uuid=' +uuid+ '><img class="table-button" src="Delete-26.png" alt="copy"></i></button>'
+    }
+
+    var makeToggle =function (enabled, uuid) {
+        var toggleId = 'toggle-' + uuid;
+        var toggleText = 'Disable';
+        var checked = 'checked'
+        if (!enabled) {
+            toggleText = 'Enable';
+            checked = ''
+        }
+        var toggle =    '<div class="toggle clearfix">'+
+                            '<input type="checkbox" onchange="toggleEndpoint(this)" id="'+toggleId+'" '+ checked +' />' +
+                            '<label for="'+toggleId + '">' + toggleText + '</label>' +
+                        '</div>'
+        return toggle;
     }
 
     var submitNumbers = function () {
@@ -167,7 +206,9 @@
                 var sipUri = response.sipUri;
                 var number = response.number;
                 var password = response.password;
-                var tableRow = makeNewTableRow(sipUri, password, number);
+                var uuid = response.uuid;
+                var enabled = response.enabled;
+                var tableRow = makeTableRow(sipUri, password, number, enabled, uuid, true);
                 $('#maskedNumbersTableBody').prepend(tableRow);
             })
             .catch(function (error) {
@@ -177,31 +218,119 @@
         }
     };
 
-    $('#username').keyup(function (event) {
-        if(event.keyCode == 13){
-            submitNumbers();
-        }
-    });
-
     $('#password').keyup(function (event) {
         if(event.keyCode == 13){
             submitNumbers();
         }
     });
 
-    $('#maskedNumberButton').click(submitNumbers)
+    $('#maskedNumberButton').click(submitNumbers);
 
-    //makeMaskedNumbers('+19197891146', '+14153084916');
-    getMaskedNumbers()
-    .then(function (maskedNumbers) {
-        maskedNumbers.forEach( (entry) => {
+    var deleteSIPEndpoint = function (uuid) {
+        var deleteParms = {
+            method: 'DELETE',
+            mode: 'cors'
+        }
+        var deleteRequest = new Request('./v1/bindings/' + uuid, deleteParms);
+        var isOk = true;
+        return fetch(deleteRequest)
+        .then(function (response) {
+            isOk = response.ok
+        })
+        .then(function (j) {
+            if(isOk) {
+                return j;
+            }
+            else {
+                throw new Error(j.error);
+                return;
+            }
+        });
+    }
+
+    var updateSIPEndpoint = function (uuid, enabled) {
+        var updateParams = {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                enabled: enabled
+            })
+        };
+        var updateRequest = new Request('./v1/bindings/' + uuid, updateParams);
+        var isOk = true;
+        return fetch(updateRequest)
+        .then(function (response) {
+            isOK = response.ok;
+            return response.json();
+        })
+        .then(function (j) {
+            if(isOk) {
+                return j;
+            }
+            else {
+                throw new Error(j.error);
+                return;
+            }
+        });
+    }
+
+
+    var deleteEndpoint = function (param) {
+        var uuid = $(param).attr('uuid');
+        var result = confirm("Are you sure you want to delete?");
+        if (result) {
+            deleteSIPEndpoint(uuid)
+            .then(function () {
+                var trId = '#tr-'+uuid;
+                $(trId).remove();
+            })
+            .catch(function (error) {
+                alert(error);
+            });
+        }
+
+    };
+
+    var toggleEndpoint = function (param) {
+        console.log(param)
+        var id = $(param).attr('id');
+        var uuid = id.replace('toggle-', '');
+        var label = 'label[for="' + id + '"]';
+        var enabledValue = $(label).text();
+        var enabled = false;
+        var html = 'Enable'
+        if (enabledValue === 'Enable') {
+            enabled = true
+            html = 'Disable'
+
+        }
+        updateSIPEndpoint(uuid, enabled)
+        .then(function () {
+            $(label).html(html);
+        })
+        .catch(function (error) {
+            alert(error);
+        })
+    }
+
+
+    var updateTable = function (sipBindings) {
+        sipBindings.forEach( (entry) => {
             var sipUri = entry.sipUri;
             var number = entry.number;
             var password = entry.password;
-            var tableRow = makeTableRow(sipUri, password, number);
+            var enabled = entry.enabled;
+            var uuid = entry.uuid;
+            var tableRow = makeTableRow(sipUri, password, number, enabled, uuid);
             $('#maskedNumbersTableBody').append(tableRow);
         })
-    })
+    }
+    //makeMaskedNumbers('+19197891146', '+14153084916');
+    getMaskedNumbers()
+    .then(updateTable);
 </script>
 </body>
 </html>

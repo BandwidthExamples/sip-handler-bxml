@@ -4,7 +4,7 @@ const debug = require('debug')('sip-handler');
 const favicon = require('serve-favicon');
 const path = require('path');
 let db = require('./models');
-debug('booting %s', 'masked-numbers');
+debug('booting %s', 'sip-handler');
 
 const express = require('express');
 let app = express();
@@ -32,7 +32,7 @@ function startServer() {
 
 	// production error handler, no stacktraces leaked to user
 	app.use( (err, req, res, next) => {
-		res.status(err.status || 500);
+		res.status(err.status || err.statusCode || 500);
 		debug(err);
 		if (typeof(err.status) === 'undefined') {
 			res.send({

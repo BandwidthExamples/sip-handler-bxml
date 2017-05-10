@@ -1,4 +1,5 @@
 const Bandwidth = require('node-bandwidth');
+const _ = require('underscore');
 const userId = process.env.BANDWIDTH_USER_ID;
 const apiToken = process.env.BANDWIDTH_API_TOKEN;
 const apiSecret = process.env.BANDWIDTH_API_SECRET;
@@ -36,6 +37,7 @@ module.exports.getNewNumber = (req, res, next) => {
 		debug(numbers);
 		// Make number name the two numbers binded
 		newNumber = numbers[0].number;
+		req.newNumberId = numbers[0].id;
 		debug('Found New Number: ' + newNumber);
 		// Need number id to update
 		const numberId = numbers[0].id;
@@ -55,6 +57,52 @@ module.exports.getNewNumber = (req, res, next) => {
 		next(reason);
 	});
 };
+
+module.exports.updateEndpoint = (req, res, next) => {
+	const endpointId = req.binding.bwEndpointId;
+	debug('Updating endpoint:  ' + endpointId);
+	let params = _.clone(req.body);
+	if (_.has(params, 'password')) {
+		params.credentials = {
+			password: params.password
+		};
+		delete params.password;
+	}
+	bwApi.Endpoint.update(app.domainId, endpointId, params)
+	.then( () => {
+		next();
+	})
+	.catch( reason => {
+		debug(reason);
+		next(reason);
+	});
+}
+
+module.exports.deleteEndpoint = (req, res, next) => {
+	const endpointId = req.binding.bwEndpointId;
+	debug('Deleting endpoint: ' +endpointId);
+	bwApi.Endpoint.delete(app.domainId, endpointId)
+	.then( () => {
+		next();
+	})
+	.catch( reason => {
+		debug(reason);
+		next(reason);
+	});
+}
+
+module.exports.deletePhoneNumber = (req, res, next) => {
+	const numberId = req.binding.bwPhoneNumberId;
+	debug('Deleting phone number: ' + numberId);
+	bwApi.PhoneNumber.delete(numberId)
+	.then( () => {
+		next();
+	})
+	.catch( reason => {
+		debug(reason);
+		next(reason);
+	});
+}
 
 module.exports.validateMessage = (req, res, next) => {
 	debug('Validating new message');
@@ -143,6 +191,7 @@ module.exports.createEndpoint = (req, res, next) => {
 	.then( (endpoint) => {
 		debug('Endpoint created');
 		debug(endpoint);
+		req.newEndpointId = endpoint.id;
 		return bwApi.Endpoint.get(app.domainId, endpoint.id)
 		.then( (value) => {
 			debug(value);

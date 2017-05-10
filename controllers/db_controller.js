@@ -3,7 +3,7 @@ const _ = require('underscore');
 var sequelize = require('./../models/index').sequelize;
 let app = require('./../index');
 
-let Binding = app.get('models').Binding;
+let SIPBinding = app.get('models').SIPBinding;
 let db = {};
 
 module.exports.saveBinding = (req, res, next) => {
@@ -11,14 +11,17 @@ module.exports.saveBinding = (req, res, next) => {
 	const newNumber = req.newNumber;
 	const newEndpoint = req.endpoint;
 	const bindingValue = {
-		sipUri: newEndpoint,
-		number: newNumber,
-		password: req.body.password
+		sipUri          : newEndpoint,
+		number          : newNumber,
+		password        : req.body.password,
+		bwEndpointId    : req.newEndpointId,
+		bwPhoneNumberId : req.newNumberId
 	}
-	Binding.create(bindingValue)
+	SIPBinding.create(bindingValue)
 	.then( (binding) => {
-		debug('New binding saved as: ${bindingValue}');
-		res.status('201').send(bindingValue);
+		debug('New binding saved as: ' + binding.uuid);
+		req.uuid = binding.uuid;
+		next();
 	})
 	.catch( (reason) => {
 		debug(reason);
@@ -98,11 +101,108 @@ module.exports.findNumbers = (req, res, next) => {
 	}
 };
 
+module.exports.updateBinding = (req, res, next) => {
+	const bindingId = req.params.bindingId;
+	debug('Updating bindingID: ' + bindingId);
+	const params = req.body;
+	debug('With Params: ');
+	SIPBinding.update(params,
+	{
+		where: { uuid: bindingId },
+		returning: true
+	})
+	.then( binding => {
+		debug('Updated Record!')
+		debug(binding[1][0].dataValues);
+		next();
+	})
+	.catch( reason => {
+		debug(reason);
+		next(reason);
+	})
+};
+
+
+module.exports.deleteBinding = (req, res, next) => {
+	const bindingId = req.params.bindingId;
+	debug('deleting bindingID: '+ bindingId);
+	SIPBinding.update({
+		deleted: true
+		}, {
+		where: {
+			uuid: bindingId
+		},
+		returning: true
+	})
+	.then( binding => {
+		debug('Updated Record!')
+		debug(binding[1][0].dataValues);
+		next();
+	})
+	.catch( reason => {
+		debug(reason);
+		next(reason);
+	})
+}
+
+module.exports.getBindingFull = (req, res, next) => {
+	const bindingId = (req.params.bindingId || req.uuid);
+	debug('Finding Binding: ' + bindingId);
+	SIPBinding.findAll({
+		where: {
+			$and: {
+				uuid: bindingId,
+				deleted: false
+			}
+		},
+		limit: 1
+	})
+	.then( bindings => {
+		req.binding = bindings[0];
+		next();
+	})
+	.catch( (reason) => {
+		debug(reason);
+		let err = new Error('Couldn\'t fetch from database');
+		next(err);
+	});
+};
+
+module.exports.getBinding = (req, res, next) => {
+	const bindingId = (req.params.bindingId || req.uuid);
+	debug('Finding Binding: ' + bindingId);
+	SIPBinding.findAll({
+		where: {
+			$and: {
+				uuid: bindingId,
+				deleted: false
+			}
+		},
+		attributes: ['uuid', 'number', 'password', 'enabled', 'sipUri'],
+		limit: 1
+	})
+	.then( bindings => {
+		req.binding = bindings[0];
+		next();
+	})
+	.catch( (reason) => {
+		debug(reason);
+		let err = new Error('Couldn\'t fetch from database');
+		next(err);
+	});
+};
+
 module.exports.listBindings = (req, res, next) => {
 	debug('Returning Bindings');
-	Binding.findAll()
+	SIPBinding.findAll({
+		where: {
+			deleted: false
+		},
+		attributes: ['uuid', 'number', 'password', 'enabled', 'sipUri']
+	})
 	.then( (bindings) => {
-		res.status(200).send(bindings);
+		req.bindings = bindings;
+		next();
 	})
 	.catch( (reason) => {
 		debug(reason);

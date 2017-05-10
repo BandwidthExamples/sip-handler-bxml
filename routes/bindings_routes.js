@@ -10,8 +10,34 @@ router.route('/')
 		bindings.validateMessage,
 		bw.createEndpoint,
 		bw.getNewNumber,
-		db.saveBinding
+		db.saveBinding,
+		db.getBinding,
+		bindings.sendNewBinding
 		)
 	.get(
-		db.listBindings
+		db.listBindings,
+		bindings.sendBindings
 		);
+
+router.route('/:bindingId')
+	.get(
+		db.getBinding,
+		bindings.sendBinding
+		)
+	.post(
+		bindings.validateUpdate,
+		db.getBindingFull,
+		bindings.checkIfExists,
+		bw.updateEndpoint,
+		db.updateBinding,
+		db.getBinding,
+		bindings.sendBinding
+		)
+	.delete(
+		db.getBindingFull,
+		bindings.checkIfExists,
+		bw.deleteEndpoint,
+		bw.deletePhoneNumber,
+		db.deleteBinding,
+		bindings.send200
+		)
