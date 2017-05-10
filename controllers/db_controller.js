@@ -34,7 +34,7 @@ module.exports.saveBinding = (req, res, next) => {
 
 
 const getNumberFromSIP = function(sip) {
-	return Binding.find({
+	return SIPBinding.find({
 		where: {
 			sipUri: sip
 		}
@@ -52,7 +52,7 @@ const getNumberFromSIP = function(sip) {
 }
 
 const getSIPFromNumber = function(number) {
-	return Binding.find({
+	return SIPBinding.find({
 		where: {
 			number: number
 		}
