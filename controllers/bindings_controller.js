@@ -56,6 +56,9 @@ module.exports.checkIfExists = (req, res, next) => {
 }
 
 module.exports.sendNewBinding = (req, res, next) => {
+	let location = getBaseUrlFromReq(req);
+	location = location + '/v1/bindings/' + req.binding.uuid;
+	res.location(location);
 	res.status(201).send(req.binding);
 }
 
@@ -67,3 +70,6 @@ module.exports.send200 = (req, res, next) => {
 	res.status(200).send();
 }
 
+const getBaseUrlFromReq = (req) => {
+	return 'http://' + req.hostname;
+};
