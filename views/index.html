@@ -11,16 +11,17 @@
 <link href="https://d3l0ifulerbodr.cloudfront.net/main.css" rel="stylesheet">
 <style>
     .main-container{
-        width: 75%;
-        max-width: 800px;
+        width: 85%;
+        max-width: 1000px;
         margin: 0 auto;
     }
-    .main-container button{
+    /*.main-container button{
         float: right;
-    }
+    }*/
     .table-wrap{
         margin-top: 5em;
         clear: both;
+        overflow-y: hidden;
     }
     .wss-text{
         float:left;
@@ -33,9 +34,42 @@
         display: inline;
         line-height: 1em;
     }
+    .wss-text code{
+      border-radius: 3px 0px 0px 3px;
+      border-right: 0px;
+    }
     .wss-button{
         max-height: 95%;
         max-width: 95%;
+    }
+    #maskedNumberButton{
+      float: right;
+    }
+    .copy{
+      border-radius: 0px 3px 3px 0px !important;
+      font-size: .85em !important;
+      background-image: url('Clipboard-50.png') !important;
+      background-size: 60% !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+    }
+    .copyButton{
+      background-image: url('Clipboard-50.png') !important;
+      background-size: 60% !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+      vertical-align: bottom !important;
+      font-size: .7em !important;
+      /* border-radius: 0px 3px 3px 0px; */
+      margin-left: 5px !important;
+    }
+    .deleteButton{
+      background-image: url('Delete-50.png') !important;
+      background-size: 60% !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+      float: none !important;
+      border: none !important;
     }
     .table-button{
         max-height: 99%;
@@ -46,6 +80,9 @@
         display: inline;
         line-height: 1em;
     }
+    /*td code{
+      vertical-align: -webkit-baseline-middle;
+    }*/
 </style>
 </head>
 <body>
@@ -55,8 +92,8 @@
     <br />
 <!-- Start component HTML -->
     <div class="wss-text">
-        <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3> 
-        <button class="btn iconic iconic--secondary iconic--small iconic--light" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443"><img class="wss-button" src="Clipboard.svg" alt="copy"></i></button>
+        <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3>
+        <button class="btn iconic iconic--secondary iconic--small iconic--light copy" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443"></button>
 
 <!--         <button class="btn button button--secondary button--small button--light button--hover-go button--right" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443">Copy</button> -->
     </div>
@@ -72,7 +109,7 @@
             <div class="help">Must be at least 6 characters!</div>
         </div>
     </div>
-    <button class="button button--submit button--hover-go button--right" id="maskedNumberButton">Create new SIP Endpoint</button>
+    <button class="button button--medium button--submit button--hover-go button--right" id="maskedNumberButton">Create new SIP Endpoint</button>
     <div class="table-wrap">
         <table cellpadding="0" cellspacing="0" class="small" id='maskedNumbersTable'>
             <thead>
@@ -154,7 +191,7 @@
     }
 
     var makeCopyButton = function (data) {
-        return '<button class="btn iconic iconic--secondary iconic--small iconic--light" data-clipboard-text=' + data+ '><img class="table-button" src="Clipboard.svg" alt="copy"></i></button>'
+        return '<button class="btn iconic iconic--secondary iconic--small iconic--light copyButton" data-clipboard-text=' + data+ '></button>'
     }
 
     var makeTableRow = function (sipUri, password, number, enabled, uuid, newRow=false) {
@@ -169,12 +206,12 @@
         else {
             tableRow = '<tr id="tr-' + uuid + '"><td><code>'
         }
-        tableRow = tableRow + sipUri + sipUriCopyButton + '</code></td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td><td>' + toggle + '</td><td>' + deleteButton + '</td></tr>'
+        tableRow = tableRow + sipUri + '</code>' + sipUriCopyButton + '</td><td><code>' + password + '</code>' + passwordCopyButton + '</td><td>' + libphonenumber.format(number, 'US', 'National') + '</td><td>' + toggle + '</td><td>' + deleteButton + '</td></tr>'
         return tableRow;
     }
 
     var makeDeleteButton = function (uuid) {
-        return '<button onclick="deleteEndpoint(this)" class="btn iconic iconic--secondary iconic--small iconic--light deleteButton" uuid=' +uuid+ '><img class="table-button" src="Delete-26.png" alt="copy"></i></button>'
+        return '<button onclick="deleteEndpoint(this)" class="btn iconic iconic--secondary iconic--small iconic--light deleteButton" uuid=' +uuid+ '></button>'
     }
 
     var makeToggle =function (enabled, uuid) {
