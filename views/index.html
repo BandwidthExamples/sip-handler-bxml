@@ -43,20 +43,20 @@
         max-width: 95%;
     }
     .copy{
-      border-radius: 0px 3px 3px 0px;
-      font-size: .85em;
+      border-radius: 0px 3px 3px 0px !important;
+      font-size: .85em !important;
     }
     .copyButton{
-      background-image: url('Clipboard-100.png');
-      background-size: contain;
-      background-position: center;
+      background-image: url('Clipboard-100.png') !important;
+      background-size: contain !important;
+      background-position: center !important;
     }
     .deleteButton{
-      background-image: url('Delete-100.png');
-      background-size: contain;
-      background-position: center;
-      float: none;
-      border: none;
+      background-image: url('Delete-100.png') !important;
+      background-size: contain !important;
+      background-position: center !important;
+      float: none !important;
+      border: none !important;
     }
     .table-button{
         max-height: 99%;
@@ -80,7 +80,7 @@
 <!-- Start component HTML -->
     <div class="wss-text">
         <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3>
-        <button class="btn iconic iconic--secondary iconic--small iconic--light copy" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443"><img class="wss-button" src="Clipboard.svg" alt="copy"></i></button>
+        <button class="btn iconic iconic--secondary iconic--small iconic--light copy copyButton" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443"></button>
 
 <!--         <button class="btn button button--secondary button--small button--light button--hover-go button--right" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443">Copy</button> -->
     </div>
