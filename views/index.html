@@ -49,8 +49,12 @@
     .copyButton{
       background-image: url('Clipboard-50.png') !important;
       background-size: 60% !important;
-      background-repeat: no-repeat !important;;
+      background-repeat: no-repeat !important;
       background-position: center !important;
+      vertical-align: bottom !important;
+      font-size: .7em !important;
+      /* border-radius: 0px 3px 3px 0px; */
+      margin-left: 5px !important;
     }
     .deleteButton{
       background-image: url('Delete-50.png') !important;
@@ -69,9 +73,9 @@
         display: inline;
         line-height: 1em;
     }
-    td code{
+    /*td code{
       vertical-align: -webkit-baseline-middle;
-    }
+    }*/
 </style>
 </head>
 <body>
@@ -195,7 +199,7 @@
         else {
             tableRow = '<tr id="tr-' + uuid + '"><td><code>'
         }
-        tableRow = tableRow + sipUri + '</code>' + sipUriCopyButton + '</td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td><td>' + toggle + '</td><td>' + deleteButton + '</td></tr>'
+        tableRow = tableRow + sipUri + '</code>' + sipUriCopyButton + '</td><td><code>' + password + '</code>' + passwordCopyButton + '</td><td>' + libphonenumber.format(number, 'US', 'National') + '</td><td>' + toggle + '</td><td>' + deleteButton + '</td></tr>'
         return tableRow;
     }
 
