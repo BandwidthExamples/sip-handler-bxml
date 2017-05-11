@@ -15,9 +15,9 @@
         max-width: 800px;
         margin: 0 auto;
     }
-    .main-container button{
+    /*.main-container button{
         float: right;
-    }
+    }*/
     .table-wrap{
         margin-top: 5em;
         clear: both;
@@ -195,7 +195,7 @@
         else {
             tableRow = '<tr id="tr-' + uuid + '"><td><code>'
         }
-        tableRow = tableRow + sipUri + sipUriCopyButton + '</code></td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td><td>' + toggle + '</td><td>' + deleteButton + '</td></tr>'
+        tableRow = tableRow + sipUri + '</code>' + sipUriCopyButton + '</td><td><code>' + password + passwordCopyButton + '</code></td><td>' + libphonenumber.format(number, 'US', 'National') + '</td><td>' + toggle + '</td><td>' + deleteButton + '</td></tr>'
         return tableRow;
     }
 
