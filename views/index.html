@@ -21,6 +21,7 @@
     .table-wrap{
         margin-top: 5em;
         clear: both;
+        overflow-y: hidden;
     }
     .wss-text{
         float:left;
@@ -33,9 +34,29 @@
         display: inline;
         line-height: 1em;
     }
+    .wss-text code{
+      border-radius: 3px 0px 0px 3px;
+      border-right: 0px;
+    }
     .wss-button{
         max-height: 95%;
         max-width: 95%;
+    }
+    .copy{
+      border-radius: 0px 3px 3px 0px;
+      font-size: .85em;
+    }
+    .copyButton{
+      background-image: url('Clipboard-100.png');
+      background-size: contain;
+      background-position: center;
+    }
+    .deleteButton{
+      background-image: url('Delete-100.png');
+      background-size: contain;
+      background-position: center;
+      float: none;
+      border: none;
     }
     .table-button{
         max-height: 99%;
@@ -46,6 +67,9 @@
         display: inline;
         line-height: 1em;
     }
+    td code{
+      vertical-align: -webkit-baseline-middle;
+    }
 </style>
 </head>
 <body>
@@ -55,8 +79,8 @@
     <br />
 <!-- Start component HTML -->
     <div class="wss-text">
-        <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3> 
-        <button class="btn iconic iconic--secondary iconic--small iconic--light" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443"><img class="wss-button" src="Clipboard.svg" alt="copy"></i></button>
+        <h3>Websocket URI: <code>wss://webrtc.registration.bandwidth.com:10443</code></h3>
+        <button class="btn iconic iconic--secondary iconic--small iconic--light copy" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443"><img class="wss-button" src="Clipboard.svg" alt="copy"></i></button>
 
 <!--         <button class="btn button button--secondary button--small button--light button--hover-go button--right" data-clipboard-text="wss://webrtc.registration.bandwidth.com:10443">Copy</button> -->
     </div>
@@ -72,7 +96,7 @@
             <div class="help">Must be at least 6 characters!</div>
         </div>
     </div>
-    <button class="button button--submit button--hover-go button--right" id="maskedNumberButton">Create new SIP Endpoint</button>
+    <button class="button button--medium button--submit button--hover-go button--right" id="maskedNumberButton">Create new SIP Endpoint</button>
     <div class="table-wrap">
         <table cellpadding="0" cellspacing="0" class="small" id='maskedNumbersTable'>
             <thead>
@@ -154,7 +178,7 @@
     }
 
     var makeCopyButton = function (data) {
-        return '<button class="btn iconic iconic--secondary iconic--small iconic--light" data-clipboard-text=' + data+ '><img class="table-button" src="Clipboard.svg" alt="copy"></i></button>'
+        return '<button class="btn iconic iconic--secondary iconic--small iconic--light copyButton" data-clipboard-text=' + data+ '></button>'
     }
 
     var makeTableRow = function (sipUri, password, number, enabled, uuid, newRow=false) {
@@ -174,7 +198,7 @@
     }
 
     var makeDeleteButton = function (uuid) {
-        return '<button onclick="deleteEndpoint(this)" class="btn iconic iconic--secondary iconic--small iconic--light deleteButton" uuid=' +uuid+ '><img class="table-button" src="Delete-26.png" alt="copy"></i></button>'
+        return '<button onclick="deleteEndpoint(this)" class="btn iconic iconic--secondary iconic--small iconic--light deleteButton" uuid=' +uuid+ '></button>'
     }
 
     var makeToggle =function (enabled, uuid) {
