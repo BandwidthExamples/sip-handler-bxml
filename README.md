@@ -1,4 +1,10 @@
-# sip-handler
+<div align="center">
+
+# Sip Handler
+
+<a href="http://dev.bandwidth.com"><img src="https://s3.amazonaws.com/bwdemos/BW_Voice.png"/></a>
+</div>
+
 Super simple application to generate SIP creds and route calls
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
