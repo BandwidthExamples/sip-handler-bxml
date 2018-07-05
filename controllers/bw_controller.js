@@ -1,29 +1,13 @@
-const Bandwidth = require('node-bandwidth');
 const _ = require('underscore');
-const userId = process.env.BANDWIDTH_USER_ID;
-const apiToken = process.env.BANDWIDTH_API_TOKEN;
-const apiSecret = process.env.BANDWIDTH_API_SECRET;
-const domainName = process.env.BANDWIDTH_DOMAIN_NAME;
-
 const debug = require('debug')('sip-handler');
 let app = require('../index.js');
 const areaCodes = ['919', '415']
-
-// let applicationId = process.env.BANDWIDTH_APPLICATION_ID;
-
-if (!userId || !apiToken || !apiSecret ) {
-  throw new Error('Invalid or non-existing Bandwidth credentials. \n Please set your: \n * userId \n * apiToken \n * apiSecret');
-}
+const bwApi = require('./bandwidth.js');
+const domainName = process.env.BANDWIDTH_DOMAIN_NAME;
 
 if(!domainName) {
-	throw new Error('Must specifiy unique domain name!');
+  throw new Error('Must specifiy unique domain name!');
 }
-
-const bwApi = new Bandwidth({
-  userId    : userId,
-  apiToken  : apiToken,
-  apiSecret : apiSecret
-});
 
 module.exports.getNewNumber = (req, res, next) => {
 	debug('Searching for new binding number');
@@ -104,78 +88,6 @@ module.exports.deletePhoneNumber = (req, res, next) => {
 	});
 }
 
-module.exports.validateMessage = (req, res, next) => {
-	debug('Validating new message');
-	debug(req.body);
-	res.sendStatus(200);
-	next();
-};
-
-module.exports.validateCall = (req, res, next) => {
-	debug('Validating new call');
-	debug(req.body);
-	res.sendStatus(200);
-	next();
-};
-
-module.exports.checkEvent = (req, res, next) => {
-	debug('Checking event type');
-	const eventType = req.body.eventType;
-	debug(eventType);
-	if (eventType === 'answer') {
-		next();
-	}
-	else {
-		debug('Don\'t care about this event');
-		return;
-	}
-};
-
-module.exports.transferCall = (req, res, next) => {
-	const callId = req.body.callId
-	if (req.bindingExists) {
-		const transfer = {
-			transferTo: req.transferTo,
-			transferCallerId: req.transferCallerId
-		};
-		bwApi.Call.transfer(callId, transfer)
-		.then( (transferId) => {
-			debug('Call Transfered! TransferId: ' + transferId);
-			return
-		})
-		.catch( (reason) => {
-			debug(reason);
-		});
-	}
-	else {
-		bwApi.Call.hangup(callId)
-		.then( () => {
-			debug('Call binding incorrect');
-		})
-		.catch( (reason) => {
-			debug(reason);
-		})
-	}
-}
-
-module.exports.sendMessage = (req, res, next) => {
-	debug('Sending message');
-	debug(req.body);
-	const message = {
-		to: req.body.from,
-		from: req.body.to,
-		text: 'SMS and MMS are not supported natively over SIP'
-	}
-	bwApi.Message.send(message)
-	.then((message) => {
-		req.sentMessage = message;
-		debug('Message Sent');
-		debug(message);
-	})
-	.catch( (reason) => {
-		debug(reason);
-	});
-};
 
 module.exports.createEndpoint = (req, res, next) => {
 	debug('Creating Endpoint');
@@ -302,7 +214,7 @@ const newApplication = (appName, url) => {
 		name: appName,
 		incomingMessageUrl: url + '/bandwidth/messages',
 		incomingCallUrl: url + '/bandwidth/calls',
-		callbackHttpMethod: 'post',
+		callbackHttpMethod: 'get',
 		autoAnswer: true
 	});
 };

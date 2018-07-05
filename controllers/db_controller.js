@@ -71,8 +71,8 @@ const getSIPFromNumber = function(number) {
 
 module.exports.findNumbers = (req, res, next) => {
 	debug('Finding number bindings');
-	const to = req.body.to;
-	const from_ = req.body.from;
+	const to = req.query.to;
+	const from_ = req.query.from;
 	if (from_.startsWith('sip')) {
 		getNumberFromSIP(from_)
 		.then(function (number) {
