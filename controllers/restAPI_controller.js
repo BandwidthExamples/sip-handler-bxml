@@ -1,3 +1,5 @@
+// Old file using the REST API to control the call flow
+
 const debug = require('debug')('sip-handler');
 const bwApi = require('bandwidth.js');
 

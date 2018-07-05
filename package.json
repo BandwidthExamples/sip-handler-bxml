@@ -1,5 +1,5 @@
 {
-  "name": "sip-handler-api",
+  "name": "sip-handler-bxml",
   "version": "0.0.1",
   "description": "Super simple application to generate SIP creds and route calls",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://dtolb@github.com/dtolb/sip-handler.git"
+    "url": "git@github.com:BandwidthExamples/sip-handler-bxml.git"
   },
   "keywords": [
     "bandwidth",
@@ -23,9 +23,9 @@
   "author": "Dan Tolbert",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dtolb/sip-handler/issues"
+    "url": "https://github.com/BandwidthExamples/sip-handler-bxml/issues"
   },
-  "homepage": "https://github.com/dtolb/sip-handler#readme",
+  "homepage": "https://github.com/BandwidthExamples/sip-handler-bxml",
   "dependencies": {
     "awesome-phonenumber": "^1.3.0",
     "body-parser": "^1.17.1",
